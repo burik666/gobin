@@ -1,6 +1,11 @@
 # gobin
 gobin is a package manager for /go/bin
 
+gobin runs `go` to install, get available versions, get a version from a binary.
+It does not store anything on disk itself.
+
+For information about go modules, see https://go.dev/ref/mod.
+
 ## Features
 - List installed packages.
 - Check for updates.
