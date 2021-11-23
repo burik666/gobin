@@ -19,10 +19,12 @@ func init() {
 
 	listCmd.Flags().SortFlags = false
 	listCmd.PersistentFlags().SortFlags = false
+	listCmd.InheritedFlags().SortFlags = false
 }
 
 var listCmd = &cobra.Command{
 	DisableFlagsInUseLine: true,
+	DisableAutoGenTag:     true,
 
 	Use:   "list [flags] [package | filename]...",
 	Short: "list installed packages",

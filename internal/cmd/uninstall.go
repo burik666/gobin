@@ -20,6 +20,7 @@ func init() {
 
 	uninstallCmd.Flags().SortFlags = false
 	uninstallCmd.PersistentFlags().SortFlags = false
+	uninstallCmd.InheritedFlags().SortFlags = false
 }
 
 var uninstallCmd = &cobra.Command{

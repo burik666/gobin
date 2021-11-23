@@ -20,6 +20,7 @@ func init() {
 
 	installCmd.Flags().SortFlags = false
 	installCmd.PersistentFlags().SortFlags = false
+	installCmd.InheritedFlags().SortFlags = false
 }
 
 var installCmd = &cobra.Command{
