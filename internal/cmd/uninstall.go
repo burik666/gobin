@@ -23,7 +23,9 @@ func init() {
 }
 
 var uninstallCmd = &cobra.Command{
-	Use:   "uninstall [package | filename]...",
+	DisableFlagsInUseLine: true,
+
+	Use:   "uninstall [flags] [package | filename]...",
 	Short: "Delete installed packages",
 	Example: "  gobin uninstall goimports\n" +
 		"  gobin uninstall golang.org/x/tools/cmd/goimports\n" +

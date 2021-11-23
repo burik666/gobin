@@ -23,7 +23,9 @@ func init() {
 }
 
 var installCmd = &cobra.Command{
-	Use:   "install [packages]...",
+	DisableFlagsInUseLine: true,
+
+	Use:   "install [flags] [packages]... -- [build flags]",
 	Short: "Install packages",
 	Example: "  gobin install golang.org/x/tools/cmd/goimports\n" +
 		"  gobin install golang.org/x/tools/cmd/...\n" +
@@ -37,6 +39,13 @@ var installCmd = &cobra.Command{
 		var result struct {
 			Installed []mod.Pkg
 			New       []mod.Pkg
+		}
+
+		var installArgs []string
+
+		if cmd.ArgsLenAtDash() > 0 {
+			installArgs = args[cmd.ArgsLenAtDash():]
+			args = args[:cmd.ArgsLenAtDash()]
 		}
 
 		for _, m := range args {
@@ -153,7 +162,7 @@ var installCmd = &cobra.Command{
 
 			fmt.Printf("Installing [%d/%d] %s\n", i+1, len(result.New), color.YellowString(namever))
 
-			if err := mod.Install(name, ver); err != nil {
+			if err := mod.Install(name, ver, installArgs); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 

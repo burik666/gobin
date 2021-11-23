@@ -22,7 +22,9 @@ func init() {
 }
 
 var listCmd = &cobra.Command{
-	Use:   "list [package | filename]...",
+	DisableFlagsInUseLine: true,
+
+	Use:   "list [flags] [package | filename]...",
 	Short: "list installed packages",
 	Example: "  gobin list\n" +
 		"  gobin list goimports\n" +

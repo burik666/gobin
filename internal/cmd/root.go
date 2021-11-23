@@ -16,7 +16,7 @@ var rootCmd = &cobra.Command{
 	Short:         "GOBIN modules manager",
 	SilenceErrors: true,
 	Example: "  gobin install golang.org/x/tools/...\n" +
-		"  gobin install golang.org/x/tools/...@v0.1.7\n" +
+		"  gobin install golang.org/x/tools/...@v0.1.7 -- -ldflags=-s\n" +
 		"  gobin list goimports\n" +
 		"  gobin list golang.org/x/tools/cmd/...\n" +
 		"  gobin upgrade golang.org/x/tools/cmd/...\n" +

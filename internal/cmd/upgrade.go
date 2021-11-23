@@ -23,13 +23,22 @@ func init() {
 }
 
 var upgradeCmd = &cobra.Command{
-	Use:   "upgrade [package | filename]...",
+	DisableFlagsInUseLine: true,
+
+	Use:   "upgrade [flags] [package | filename]... -- [build flags]",
 	Short: "Upgrade installed packages to the latest version.",
 	Example: "  gobin upgrade\n" +
 		"  gobin upgrade goimports\n" +
 		"  gobin upgrade golang.org/x/tools/cmd/...",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
+
+		var installArgs []string
+
+		if cmd.ArgsLenAtDash() > 0 {
+			installArgs = args[cmd.ArgsLenAtDash():]
+			args = args[:cmd.ArgsLenAtDash()]
+		}
 
 		result := make([]mod.Pkg, 0)
 
@@ -90,7 +99,7 @@ var upgradeCmd = &cobra.Command{
 
 			fmt.Printf("Installing [%d/%d] %s\n", i+1, len(result), color.YellowString(namever))
 
-			if err := mod.Install(name, ver); err != nil {
+			if err := mod.Install(name, ver, installArgs); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}

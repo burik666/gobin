@@ -92,9 +92,12 @@ func getModuleInfo(path, version string) (rmi *ModuleInfo, rerr error) {
 	return &mi, nil
 }
 
-func Install(path, version string) error {
+func Install(path, version string, args []string) error {
 	name := fmt.Sprintf("%s@%s", path, version)
-	cmd := exec.Command(config.Go, "install", "-v", name)
+	cmdArgs := []string{"install", "-v"}
+	cmdArgs = append(cmdArgs, args...)
+	cmdArgs = append(cmdArgs, name)
+	cmd := exec.Command(config.Go, cmdArgs...)
 
 	if config.Trace {
 		fmt.Fprintf(os.Stderr, "> %s\n", cmd.String())
