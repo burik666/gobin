@@ -87,7 +87,7 @@ func (bi *BuildInfo) UnmarshalText(data []byte) (err error) {
 			break
 		}
 
-		line = bytes.Trim(line, "\t")
+		line = bytes.TrimLeft(line, "\t")
 
 		switch {
 		case lineNum == 1:
@@ -151,6 +151,8 @@ func (bi *BuildInfo) UnmarshalText(data []byte) (err error) {
 			}
 
 			bi.Settings = append(bi.Settings, BuildSetting{Key: string(elem[0]), Value: value})
+		case len(line) == 0:
+
 		default:
 			return nil
 		}
