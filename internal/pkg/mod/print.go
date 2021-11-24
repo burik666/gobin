@@ -5,6 +5,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/burik666/gobin/internal/config"
 	"github.com/fatih/color"
 )
 
@@ -25,6 +26,7 @@ func (pkg *Pkg) Print() {
 
 	fmt.Printf("* %s\n", colorName(name))
 
+	pkg.printFilename()
 	pkg.printPath()
 	pkg.printInstalledVersion()
 	pkg.printSelectedVersion()
@@ -32,6 +34,12 @@ func (pkg *Pkg) Print() {
 	pkg.printVersions()
 
 	fmt.Print("\n")
+}
+
+func (pkg *Pkg) printFilename() {
+	if pkg.BuildInfo != nil && pkg.BuildInfo.Filename != "" {
+		printKeyValue("File", strings.TrimPrefix(pkg.BuildInfo.Filename, config.GOBIN+"/"))
+	}
 }
 
 func (pkg *Pkg) printPath() {
