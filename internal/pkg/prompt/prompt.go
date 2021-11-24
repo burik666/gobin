@@ -2,9 +2,16 @@ package prompt
 
 import (
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/burik666/gobin/internal/config"
+)
+
+var (
+	stdin  io.Reader = os.Stdin
+	stdout io.Writer = os.Stdout
 )
 
 func Continue() bool {
@@ -12,20 +19,20 @@ func Continue() bool {
 		return true
 	}
 
-	fmt.Printf("Do you want to continue? [Y/n] ")
+	fmt.Fprint(stdout, "Do you want to continue? [Y/n] ")
 
 	var resp string
 
-	n, err := fmt.Scanln(&resp)
+	n, err := fmt.Fscanln(stdin, &resp)
 	resp = strings.ToUpper(resp)
 
 	if err != nil || n == 0 || (resp != "Y" && resp != "YES") {
-		fmt.Println("Abort.")
+		fmt.Fprintln(stdout, "Abort.")
 
 		return false
 	}
 
-	fmt.Println()
+	fmt.Fprintln(stdout)
 
 	return true
 }
