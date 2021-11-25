@@ -57,23 +57,6 @@ func (bi *BuildInfo) UnmarshalText(data []byte) (err error) {
 		colon     = []byte(":")
 	)
 
-	readModuleLine := func(elem [][]byte) (Module, error) {
-		if len(elem) != 2 && len(elem) != 3 {
-			return Module{}, fmt.Errorf("expected 2 or 3 columns; got %d", len(elem))
-		}
-
-		sum := ""
-		if len(elem) == 3 {
-			sum = string(elem[2])
-		}
-
-		return Module{
-			Path:    string(elem[0]),
-			Version: strings.TrimPrefix(string(elem[1]), "go"),
-			Sum:     sum,
-		}, nil
-	}
-
 	var (
 		last *Module
 		line []byte
@@ -92,6 +75,10 @@ func (bi *BuildInfo) UnmarshalText(data []byte) (err error) {
 		switch {
 		case lineNum == 1:
 			elem := bytes.SplitN(line, colon, 2)
+			if len(elem) != 2 {
+				return fmt.Errorf("excepted 2 columns separated by colon; got: %q", line)
+			}
+
 			bi.Filename = string(elem[0])
 			bi.GoVersion = string(elem[1][1:])
 		case bytes.HasPrefix(line, pathLine):
@@ -154,6 +141,23 @@ func (bi *BuildInfo) UnmarshalText(data []byte) (err error) {
 	}
 
 	return nil
+}
+
+func readModuleLine(elem [][]byte) (Module, error) {
+	if len(elem) != 2 && len(elem) != 3 {
+		return Module{}, fmt.Errorf("expected 2 or 3 columns; got %d", len(elem))
+	}
+
+	sum := ""
+	if len(elem) == 3 {
+		sum = string(elem[2])
+	}
+
+	return Module{
+		Path:    string(elem[0]),
+		Version: strings.TrimPrefix(string(elem[1]), "go"),
+		Sum:     sum,
+	}, nil
 }
 
 func bytesCut(s, sep []byte) (before, after []byte, found bool) {
