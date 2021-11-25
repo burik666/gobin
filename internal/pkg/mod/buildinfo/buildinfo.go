@@ -94,13 +94,6 @@ func (bi *BuildInfo) UnmarshalText(data []byte) (err error) {
 			elem := bytes.SplitN(line, colon, 2)
 			bi.Filename = string(elem[0])
 			bi.GoVersion = string(elem[1][1:])
-
-			if strings.HasPrefix(bi.GoVersion, "devel") {
-				p := strings.SplitN(bi.GoVersion, " ", 3)
-				bi.GoVersion = p[1]
-			}
-
-			bi.GoVersion = strings.TrimPrefix(bi.GoVersion, "go")
 		case bytes.HasPrefix(line, pathLine):
 			elem := line[len(pathLine):]
 			bi.Path = string(elem)
