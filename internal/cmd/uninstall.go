@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/burik666/gobin/internal/pkg/mod"
+	"github.com/burik666/gobin/internal/pkg/gocmd"
+	"github.com/burik666/gobin/internal/pkg/gopkg"
 	"github.com/burik666/gobin/internal/pkg/prompt"
 
 	"github.com/fatih/color"
@@ -35,15 +36,15 @@ var uninstallCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 
-		var result []*mod.Pkg
+		var result []*gopkg.Pkg
 
-		packages, err := mod.ListInstalled(args, *uninstallExclude)
+		packages, err := gopkg.ListInstalled(args, *uninstallExclude)
 		if err != nil {
 			return err
 		}
 
 		for _, pkg := range packages {
-			result = append(result, &mod.Pkg{BuildInfo: pkg.BuildInfo})
+			result = append(result, &gopkg.Pkg{BuildInfo: pkg.BuildInfo})
 
 			if !jsonFormat {
 				pkg.Print()
@@ -76,7 +77,7 @@ var uninstallCmd = &cobra.Command{
 
 			fmt.Printf("Uninstalling [%d/%d] %s\n", i+1, len(result), color.YellowString(namever))
 
-			if err := mod.Uninstall(result[i].BuildInfo); err != nil {
+			if err := gocmd.Uninstall(&result[i].BuildInfo.BuildInfo); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}

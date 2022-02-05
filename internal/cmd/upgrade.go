@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/burik666/gobin/internal/pkg/mod"
+	"github.com/burik666/gobin/internal/pkg/gocmd"
+	"github.com/burik666/gobin/internal/pkg/gopkg"
 	"github.com/burik666/gobin/internal/pkg/prompt"
 
 	"github.com/fatih/color"
@@ -41,9 +42,9 @@ var upgradeCmd = &cobra.Command{
 			args = args[:cmd.ArgsLenAtDash()]
 		}
 
-		result := make([]mod.Pkg, 0)
+		result := make([]gopkg.Pkg, 0)
 
-		packages, err := mod.ListInstalled(args, *upgradeExclude)
+		packages, err := gopkg.ListInstalled(args, *upgradeExclude)
 		if err != nil {
 			return err
 		}
@@ -100,7 +101,7 @@ var upgradeCmd = &cobra.Command{
 
 			fmt.Printf("Installing [%d/%d] %s\n", i+1, len(result), color.YellowString(namever))
 
-			if err := mod.Install(name, ver, installArgs); err != nil {
+			if err := gocmd.Install(name, ver, installArgs); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 		}

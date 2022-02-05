@@ -1,4 +1,4 @@
-package mod
+package gopkg
 
 import (
 	"fmt"
@@ -6,6 +6,8 @@ import (
 	"strings"
 
 	"github.com/burik666/gobin/internal/config"
+	"github.com/burik666/gobin/internal/pkg/mod"
+
 	"github.com/fatih/color"
 )
 
@@ -91,7 +93,7 @@ func (pkg *Pkg) printInstalledVersion() {
 }
 
 func (pkg *Pkg) printLatestVersion() {
-	var mi *ModuleInfo
+	var mi *mod.ModuleInfo
 
 	if pkg.ModuleInfo != nil && pkg.ModuleInfo.Update != nil {
 		mi = pkg.ModuleInfo.Update

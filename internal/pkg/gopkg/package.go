@@ -1,9 +1,12 @@
-package mod
+package gopkg
 
 import (
 	"strings"
 
 	"github.com/burik666/gobin/internal/config"
+	"github.com/burik666/gobin/internal/pkg/gocmd"
+	"github.com/burik666/gobin/internal/pkg/mod"
+
 	"golang.org/x/mod/module"
 	"golang.org/x/mod/semver"
 )
@@ -11,12 +14,12 @@ import (
 type Pkg struct {
 	Name            string
 	BuildInfo       *BuildInfo
-	ModuleInfo      *ModuleInfo
-	SelectedVersion *ModuleInfo
+	ModuleInfo      *mod.ModuleInfo
+	SelectedVersion *mod.ModuleInfo
 }
 
 func (pkg *Pkg) FetchModuleInfo() error {
-	mi, err := getModuleInfo(pkg.BuildInfo.Main.Path, pkg.BuildInfo.Main.Version)
+	mi, err := gocmd.ModuleInfo(pkg.BuildInfo.Main.Path, pkg.BuildInfo.Main.Version)
 	if err != nil {
 		return err
 	}
@@ -24,7 +27,7 @@ func (pkg *Pkg) FetchModuleInfo() error {
 	pkg.ModuleInfo = mi
 
 	if module.IsPseudoVersion(pkg.BuildInfo.Main.Version) {
-		up, err := getModuleInfo(mi.Path, "latest")
+		up, err := gocmd.ModuleInfo(mi.Path, "latest")
 		if err != nil {
 			return err
 		}
@@ -72,7 +75,7 @@ func trimGoVersion(v string) string {
 }
 
 func ListInstalled(filter []string, exclude []string) ([]Pkg, error) {
-	builds, err := getBuildInfo(config.GOBIN)
+	builds, err := gocmd.BuildInfo(config.GOBIN)
 	if err != nil {
 		return nil, err
 	}
@@ -80,13 +83,16 @@ func ListInstalled(filter []string, exclude []string) ([]Pkg, error) {
 	res := make([]Pkg, 0, len(builds))
 
 	for i := range builds {
-		bi := builds[i]
+		bi := BuildInfo{builds[i]}
 		if len(filter) > 0 && !bi.Matched(filter) ||
 			len(exclude) > 0 && bi.Matched(exclude) {
 			continue
 		}
 
-		res = append(res, Pkg{Name: bi.BuildInfo.Path, BuildInfo: &bi})
+		res = append(res, Pkg{
+			Name:      bi.BuildInfo.Path,
+			BuildInfo: &bi,
+		})
 	}
 
 	return res, nil
@@ -98,7 +104,7 @@ func FindPackage(name, path, ver string) (*Pkg, error) {
 	var ferr error
 
 	for {
-		mi, err := getModuleInfo(strings.Join(p, "/"), ver)
+		mi, err := gocmd.ModuleInfo(strings.Join(p, "/"), ver)
 		if err != nil {
 			if ferr == nil {
 				ferr = err
@@ -113,6 +119,9 @@ func FindPackage(name, path, ver string) (*Pkg, error) {
 			continue
 		}
 
-		return &Pkg{Name: name, ModuleInfo: mi}, err
+		return &Pkg{
+			Name:       name,
+			ModuleInfo: mi,
+		}, err
 	}
 }

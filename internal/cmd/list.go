@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/burik666/gobin/internal/pkg/mod"
+	"github.com/burik666/gobin/internal/pkg/gopkg"
 
 	"github.com/spf13/cobra"
 )
@@ -35,12 +35,12 @@ var listCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 
-		packages, err := mod.ListInstalled(args, *listExclude)
+		packages, err := gopkg.ListInstalled(args, *listExclude)
 		if err != nil {
 			return err
 		}
 
-		result := make([]mod.Pkg, 0)
+		result := make([]gopkg.Pkg, 0)
 
 		for _, pkg := range packages {
 			if (checkUpdates || onlyUpdates) && pkg.CheckPath() {

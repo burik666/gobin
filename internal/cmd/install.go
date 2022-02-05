@@ -6,7 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/burik666/gobin/internal/pkg/mod"
+	"github.com/burik666/gobin/internal/pkg/gocmd"
+	"github.com/burik666/gobin/internal/pkg/gopkg"
 	"github.com/burik666/gobin/internal/pkg/prompt"
 
 	"github.com/fatih/color"
@@ -38,8 +39,8 @@ var installCmd = &cobra.Command{
 		cmd.SilenceUsage = true
 
 		var result struct {
-			Installed []mod.Pkg
-			New       []mod.Pkg
+			Installed []gopkg.Pkg
+			New       []gopkg.Pkg
 		}
 
 		var installArgs []string
@@ -50,14 +51,14 @@ var installCmd = &cobra.Command{
 		}
 
 		for _, m := range args {
-			name, ver := mod.SplitVer(m)
+			name, ver := gopkg.SplitVer(m)
 			if ver == "" {
 				ver = "latest"
 			}
 
-			newPkg, ferr := mod.FindPackage(name, name, ver)
+			newPkg, ferr := gopkg.FindPackage(name, name, ver)
 			if ferr != nil {
-				s, err := mod.ListInstalled([]string{name}, nil)
+				s, err := gopkg.ListInstalled([]string{name}, nil)
 				if err != nil || len(s) == 0 || !s[0].CheckPath() {
 					return ferr
 				}
@@ -69,7 +70,7 @@ var installCmd = &cobra.Command{
 				ok := false
 				for i := range s {
 					if s[i].CheckPath() {
-						newPkg, err := mod.FindPackage(s[i].BuildInfo.Path, s[i].BuildInfo.Main.Path, ver)
+						newPkg, err := gopkg.FindPackage(s[i].BuildInfo.Path, s[i].BuildInfo.Main.Path, ver)
 						if err != nil {
 							return err
 						}
@@ -91,7 +92,7 @@ var installCmd = &cobra.Command{
 					return ferr
 				}
 			} else {
-				installedPackages, err := mod.ListInstalled([]string{name}, nil)
+				installedPackages, err := gopkg.ListInstalled([]string{name}, nil)
 				if err != nil {
 					fmt.Fprintln(os.Stderr, err)
 				}
@@ -163,7 +164,7 @@ var installCmd = &cobra.Command{
 
 			fmt.Printf("Installing [%d/%d] %s\n", i+1, len(result.New), color.YellowString(namever))
 
-			if err := mod.Install(name, ver, installArgs); err != nil {
+			if err := gocmd.Install(name, ver, installArgs); err != nil {
 				fmt.Fprintln(os.Stderr, err)
 			}
 

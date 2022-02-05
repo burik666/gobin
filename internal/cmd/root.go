@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/burik666/gobin/internal/config"
-	"github.com/burik666/gobin/internal/pkg/mod"
+	"github.com/burik666/gobin/internal/pkg/gocmd"
 
 	"github.com/fatih/color"
 	"github.com/spf13/cobra"
@@ -22,7 +22,7 @@ var rootCmd = &cobra.Command{
 		"  gobin upgrade golang.org/x/tools/cmd/...\n" +
 		"  gobin uninstall golang.org/x/tools/cmd/...\n",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		goVersion, err := mod.GoVersion()
+		goVersion, err := gocmd.GoVersion()
 		if err != nil {
 			fmt.Fprint(os.Stderr, err)
 
