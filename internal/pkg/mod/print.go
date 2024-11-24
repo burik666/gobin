@@ -2,6 +2,7 @@ package mod
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
@@ -38,10 +39,7 @@ func (pkg *Pkg) Print() {
 
 func (pkg *Pkg) printFilename() {
 	if pkg.BuildInfo != nil && pkg.BuildInfo.Filename != "" {
-		name := strings.TrimPrefix(pkg.BuildInfo.Filename, config.GOBIN)
-		// window start with \
-		name = strings.TrimLeft(name, "/\\")
-		printKeyValue("File", name)
+		printKeyValue("File", strings.TrimPrefix(pkg.BuildInfo.Filename, config.GOBIN+string(os.PathSeparator)))
 	}
 }
 
