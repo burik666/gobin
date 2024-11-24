@@ -2,8 +2,6 @@ module github.com/burik666/gobin
 
 go 1.22.0
 
-toolchain go1.23.3
-
 require (
 	github.com/fatih/color v1.18.0
 	github.com/spf13/cobra v1.8.1
