@@ -91,9 +91,14 @@ func (bi *BuildInfo) UnmarshalText(data []byte) (err error) {
 
 		switch {
 		case lineNum == 1:
-			elem := bytes.SplitN(line, colon, 2)
-			bi.Filename = string(elem[0])
-			bi.GoVersion = string(elem[1][1:])
+			// windows path have a colon
+			idx := bytes.LastIndex(line, colon)
+			if idx < 0 {
+				return fmt.Errorf("expected colon go version line")
+			}
+
+			bi.Filename = string(line[0:idx])
+			bi.GoVersion = string(line[idx+2:]) // colon + space
 
 			if strings.HasPrefix(bi.GoVersion, "devel") {
 				p := strings.SplitN(bi.GoVersion, " ", 3)

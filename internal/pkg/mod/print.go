@@ -2,6 +2,7 @@ package mod
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
@@ -38,7 +39,7 @@ func (pkg *Pkg) Print() {
 
 func (pkg *Pkg) printFilename() {
 	if pkg.BuildInfo != nil && pkg.BuildInfo.Filename != "" {
-		printKeyValue("File", strings.TrimPrefix(pkg.BuildInfo.Filename, config.GOBIN+"/"))
+		printKeyValue("File", strings.TrimPrefix(pkg.BuildInfo.Filename, config.GOBIN+string(os.PathSeparator)))
 	}
 }
 
