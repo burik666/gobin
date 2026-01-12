@@ -25,17 +25,9 @@ func GoVersion() (string, error) {
 		return "", fmt.Errorf("%s", errb.String())
 	}
 
-	v := string(data)
-	v = strings.TrimPrefix(v, "go version ")
-
-	p := strings.SplitN(v, " ", 3)
-	if strings.HasPrefix(v, "devel") {
-		v = p[1]
-	} else {
-		v = p[0]
-	}
-
-	v = strings.TrimPrefix(v, "go")
+	p := strings.Split(string(data), " ")
+	p = p[1 : len(p)-1]
+	v := strings.Join(p, " ")
 
 	return v, nil
 }

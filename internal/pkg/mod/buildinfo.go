@@ -1,19 +1,19 @@
 package mod
 
 import (
-	"bytes"
+	"debug/buildinfo"
 	"fmt"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/burik666/gobin/internal/config"
-	"github.com/burik666/gobin/internal/pkg/mod/buildinfo"
+	//"github.com/burik666/gobin/internal/pkg/mod/buildinfo"
 )
 
 type BuildInfo struct {
+	Filename string
 	buildinfo.BuildInfo
 }
 
@@ -45,42 +45,28 @@ func getBuildInfo(path string) ([]BuildInfo, error) {
 		return buildInfoCache, nil
 	}
 
-	cmd := exec.Command(config.Go, "version", "-m", path)
-
-	if config.Trace {
-		fmt.Fprintf(os.Stderr, "> %s\n", cmd.String())
-	}
-
-	var errb bytes.Buffer
-	cmd.Stderr = &errb
-
-	data, err := cmd.Output()
+	files, err := os.ReadDir(path)
 	if err != nil {
-		return nil, fmt.Errorf("%s", errb.String())
+		return nil, err
 	}
 
-	res := make([]BuildInfo, 0)
+	res := make([]BuildInfo, 0, len(files))
 
-	for len(data) > 0 {
-		var bi BuildInfo
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
 
-		if err := bi.UnmarshalText(data); err != nil {
+		bi, err := buildinfo.ReadFile(filepath.Join(path, file.Name()))
+		if err != nil {
 			return nil, err
 		}
 
-		res = append(res, bi)
+		res = append(res, BuildInfo{
+			Filename:  file.Name(),
+			BuildInfo: *bi,
+		})
 
-		for len(data) > 0 {
-			n := bytes.IndexByte(data, '\n')
-			if n < 0 {
-				break
-			}
-
-			data = data[n+1:]
-			if len(data) > 0 && data[0] != '\t' {
-				break
-			}
-		}
 	}
 
 	buildInfoCache = res
