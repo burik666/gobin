@@ -63,7 +63,7 @@ func getBuildInfo(path string) ([]BuildInfo, error) {
 		}
 
 		res = append(res, BuildInfo{
-			Filename:  file.Name(),
+			Filename:  filepath.Join(path, file.Name()),
 			BuildInfo: *bi,
 		})
 

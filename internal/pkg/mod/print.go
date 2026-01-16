@@ -2,11 +2,10 @@ package mod
 
 import (
 	"fmt"
-	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
-	"github.com/burik666/gobin/internal/config"
 	"github.com/fatih/color"
 )
 
@@ -39,7 +38,7 @@ func (pkg *Pkg) Print() {
 
 func (pkg *Pkg) printFilename() {
 	if pkg.BuildInfo != nil && pkg.BuildInfo.Filename != "" {
-		printKeyValue("File", strings.TrimPrefix(pkg.BuildInfo.Filename, config.GOBIN+string(os.PathSeparator)))
+		printKeyValue("File", filepath.Base(pkg.BuildInfo.Filename))
 	}
 }
 
