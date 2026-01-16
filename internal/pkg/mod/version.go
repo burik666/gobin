@@ -26,7 +26,7 @@ func GoVersion() (string, error) {
 	}
 
 	p := strings.Split(string(data), " ")
-	p = p[1 : len(p)-1]
+	p = p[2 : len(p)-1]
 	v := strings.Join(p, " ")
 
 	return v, nil

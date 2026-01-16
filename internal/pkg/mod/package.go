@@ -54,7 +54,12 @@ func (pkg *Pkg) CheckPath() bool {
 }
 
 func (pkg *Pkg) hasGoUpdate() bool {
-	return semver.Compare("v"+pkg.BuildInfo.GoVersion, "v"+config.GoVersion) < 0
+	return semver.Compare(normalizeVersion(pkg.BuildInfo.GoVersion), normalizeVersion(config.GoVersion)) < 0
+}
+
+func normalizeVersion(ver string) string {
+	p := strings.Split(ver, " ")
+	return "v" + strings.TrimPrefix(p[0], "go")
 }
 
 func ListInstalled(filter []string, exclude []string) ([]Pkg, error) {
