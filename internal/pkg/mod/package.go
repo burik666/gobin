@@ -59,6 +59,7 @@ func (pkg *Pkg) hasGoUpdate() bool {
 
 func normalizeVersion(ver string) string {
 	p := strings.Split(ver, " ")
+	p = strings.Split(p[0], "-")
 	return "v" + strings.TrimPrefix(p[0], "go")
 }
 
